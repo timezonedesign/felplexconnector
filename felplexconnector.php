@@ -17,6 +17,12 @@ require_once(__DIR__ . '/models/Felplex.php');
 
 class FelplexConnector extends Module
 {
+	const DEFAULT_CONFIGURATION = [
+		'FELPLEX_ENTITY_ID' => '',
+		'FELPLEX_API_KEY' => '',
+		'FELPLEX_INVOICE_TYPE' => ''
+	];
+
 	public function __construct()
 	{
 		$this->initializeModule();
@@ -26,6 +32,7 @@ class FelplexConnector extends Module
 	{
 		return
 			parent::install()
+			&& $this->initDefaultConfigurationValues()
 			&& $this->installTab()
 			&& $this->registerHook('actionOrderStatusPostUpdate')
 			&& FelplexModel::installSql()
@@ -52,6 +59,17 @@ class FelplexConnector extends Module
 	
 	public function getContent()
 	{
+		if(Tools::isSubmit('save'))
+		{
+			Configuration::updateValue('FELPLEX_ENTITY_ID', Tools::getValue('entity_id'));
+			Configuration::updateValue('FELPLEX_API_KEY', Tools::getValue('api_key'));
+			Configuration::updateValue('FELPLEX_INVOICE_TYPE', Tools::getValue('type'));
+		}
+		$this->context->smarty->assign([
+			'entity_id' => Configuration::get('FELPLEX_ENTITY_ID'),
+			'api_key' => Configuration::get('FELPLEX_API_KEY'),
+			'type' => Configuration::get('FELPLEX_INVOICE_TYPE')
+		]);
 		$this->context->controller->addCSS(_MODULE_DIR_ . 'felplexconnector/views/css/style.css');
 		return $this->fetch('module:felplexconnector/views/templates/admin/config.tpl');
 	}
@@ -74,6 +92,19 @@ class FelplexConnector extends Module
 		$this->displayName = $this->l('Felplex Connector');
 		$this->description = $this->l('Felplex Connector Module');
 		$this->confirmUninstall = $this->l('Are you sure you want to uninstall this module ?');
+	}
+
+	private function initDefaultConfigurationValues()
+	{
+		foreach ( self::DEFAULT_CONFIGURATION as $key => $value )
+		{
+			if ( !Configuration::get($key) )
+			{
+				Configuration::updateValue($key, $value);
+			}
+		}
+
+		return true;
 	}
 
 	private function installTab()

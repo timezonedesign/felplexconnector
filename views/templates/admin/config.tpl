@@ -33,7 +33,7 @@
                 <div id="processing_message"></div>
                 <div class="card-footer">
                     <div class="d-flex justify-content-end">
-                        <button id="save" name="save" type="button" class="btn btn-primary" onclick="javascript:save_login();" style="margin-right:30px;">Save</button>
+                        <button id="save" name="save" type="submit" class="btn btn-primary"  style="margin-right:30px;">Save</button>
                     </div>
                 </div>
             </div>

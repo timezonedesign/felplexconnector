@@ -14,12 +14,16 @@ if ( !defined('_PS_VERSION_') ) exit;
 
 class AdminOrderFelplexController extends ModuleAdminController
 {
-	private $entity_id = 159;
-	private $api_key = 'lg0pA38zzLf8V95L9lYdt9DQbtM1s6hVRuSWVea33aIwR7BDwCd84AOItFnsXxmb';
+	private $entity_id = '';
+	private $api_key = '';
+	private $type = '';
 	
 	public function __construct()
 	{
 		parent::__construct();
+		$entity_id = Configuration::get('FELPLEX_ENTITY_ID');
+		$api_key = Configuration::get('FELPLEX_API_KEY');
+		$type = Configuration::get('FELPLEX_INVOICE_TYPE');
 	}
 
 	public function postProcess()
@@ -39,7 +43,7 @@ class AdminOrderFelplexController extends ModuleAdminController
 
 	public function createInvoice($id_order)
 	{
-		$post_fields = array('type' => 'FACT','datetime_issue' => '2020-10-27T15:03:02','total' => '79.70','total_tax' => '20.30','emails[0][email]' => 'email@example.com','emails_cc[0][email]' => 'email@example.com','to_cf' => '0','to[tax_code_type]' => 'NIT','to[tax_code]' => '12345678','to[tax_name]' => '"John Doe"','to[address][street]' => '"1a Calle"','to[address][city]' => '"Mixco"','to[address][state]' => '"Guatemala"','to[address][zip]' => '01001','to[country]' => 'GT','exempt_phrase' => '16');
+		$post_fields = array('type' => $this->type,'datetime_issue' => '2020-10-27T15:03:02','total' => '79.70','total_tax' => '20.30','emails[0][email]' => 'email@example.com','emails_cc[0][email]' => 'email@example.com','to_cf' => '0','to[tax_code_type]' => 'NIT','to[tax_code]' => '12345678','to[tax_name]' => '"John Doe"','to[address][street]' => '"1a Calle"','to[address][city]' => '"Mixco"','to[address][state]' => '"Guatemala"','to[address][zip]' => '01001','to[country]' => 'GT','exempt_phrase' => '16');
 		// $item = array('items[0][qty]' => '1','items[0][type]' => 'B','items[0][price]' => '100','items[0][description]' => '"Vasos plásticos"','items[0][without_iva]' => '0','items[0][discount]' => '25','items[0][is_discount_percentage]' => '0','items[0][taxes][qty]' => '1','items[0][taxes][tax_code]' => '1','items[0][taxes][full_name]' => 'Petróleo','items[0][taxes][short_name]' => 'IDP','items[0][taxes][tax_amount]' => '4.7','items[0][taxes][taxable_amount]' => 'null');
 		$order = Db::getInstance()->executeS("SELECT * FROM `"._DB_PREFIX_."orders` WHERE id_order=$id_order");
 		$order_details = Db::getInstance()->executeS("SELECT * FROM `"._DB_PREFIX_."order_detail` WHERE id_order=$id_order");
@@ -54,7 +58,7 @@ class AdminOrderFelplexController extends ModuleAdminController
 		
 		// $date = new DateTime($order[0]['date_upd']);
 		// $datetime_issue = $date->format('Y-m-d\TH:i:s');
-		$datetime_issue = $timestamp = date("Y-m-d\TH:i:s", time());
+		$datetime_issue = date("Y-m-d\TH:i:s", time());
 		$post_fields['datetime_issue'] = $datetime_issue;
 		$post_fields['total'] = $this->format_crrency($order[0]['total_products_wt']);
 		$post_fields['total_tax'] = $this->format_crrency($order[0]['total_products_wt'] - $order[0]['total_products']);

@@ -49,3 +49,7 @@ td {
 .content-form {
     margin-top: 50px;
 }
+
+.content-form label {
+    width: 90px;
+}
