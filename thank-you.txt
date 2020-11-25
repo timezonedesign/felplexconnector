@@ -1,0 +1,2 @@
+Thank you for using Prestashop Module Generator <3
+ - François Steinel
