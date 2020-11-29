@@ -28,7 +28,7 @@ var count_item = 0,
 
 
 function addItem(e) {
-    var names = ['type', 'qty', 'description', 'price', 'discount', 'without_vat', 'tax_amount'];
+    var names = ['type', 'qty', 'description', 'price', 'discount'];
     count_item++;
     var newItem = e.previousElementSibling.cloneNode(true);
     elements = newItem.getElementsByTagName('input');
